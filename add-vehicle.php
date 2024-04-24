@@ -1,36 +1,40 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
 error_reporting(0);
+include('includes/dbconnection.php');
 if (strlen($_SESSION['vpmsaid']==0)) {
   header('location:logout.php');
   } else{
+
 if(isset($_POST['submit']))
-{
-$adminid=$_SESSION['vpmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
-if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
-echo '<script>alert("Your password successully changed.")</script>';
-} else {
-
-echo '<script>alert("Your current password is wrong.")</script>';
-}
-
-
-
-}
+  {
+    $parkingnumber=mt_rand(100000000, 999999999);
+    $catename=$_POST['catename'];
+     $vehcomp=$_POST['vehcomp'];
+    $vehreno=$_POST['vehreno'];
+    $ownername=$_POST['ownername'];
+    $ownercontno=$_POST['ownercontno'];
+    $enteringtime=$_POST['enteringtime'];
+    
+     
+    $query=mysqli_query($con, "insert into  tblvehicle(ParkingNumber,VehicleCategory,VehicleCompanyname,RegistrationNumber,OwnerName,OwnerContactNumber) value('$parkingnumber','$catename','$vehcomp','$vehreno','$ownername','$ownercontno')");
+    if ($query) {
+echo "<script>alert('Vehicle Entry Detail has been added');</script>";
+echo "<script>window.location.href ='manage-incomingvehicle.php'</script>";
+  }
+  else
+    {
+     echo "<script>alert('Something Went Wrong. Please try again.');</script>";       
+    }
 
   
+}
   ?>
 <!doctype html>
 <html class="no-js" lang="">
 <head>
     
-    <title>VPMS - Change Password</title>
+    <title>VPMS - Add Vehicle</title>
    
 
     <link rel="apple-touch-icon" href="https://i.imgur.com/QRAUqs9.png">
@@ -46,19 +50,8 @@ echo '<script>alert("Your current password is wrong.")</script>';
     <link rel="stylesheet" href="assets/css/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
 
-</script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
 <body>
@@ -82,8 +75,8 @@ return true;
                             <div class="page-title">
                                 <ol class="breadcrumb text-right">
                                     <li><a href="dashboard.php">Dashboard</a></li>
-                                    <li><a href="change-password.php">Change Password</a></li>
-                                    <li class="active">Change Password</li>
+                                    <li><a href="add-vehicle.php">Vehicle</a></li>
+                                    <li class="active">Add Vehicle</li>
                                 </ol>
                             </div>
                         </div>
@@ -110,35 +103,47 @@ return true;
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Change </strong> Password
+                                <strong>Add </strong> Vehicle
                             </div>
                             <div class="card-body card-block">
-                                <form action="" method="post" enctype="multipart/form-data" class="form-horizontal" name="changepassword" onsubmit="return checkpass();">
+                                <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                                     
-                                   <?php
-$adminid=$_SESSION['vpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
-$cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
 
-?>
                                     <div class="row form-group">
-                                        <div class="col col-md-3"><label for="text-input" class=" form-control-label">Current Password</label></div>
-                                        <div class="col-12 col-md-9"><input type="password" name="currentpassword" class=" form-control" required= "true" value=""></div>
+                                        <div class="col col-md-3"><label for="select" class=" form-control-label">Select</label></div>
+                                        <div class="col-12 col-md-9">
+                                            <select name="catename" id="catename" class="form-control">
+                                                <option value="0">Select Category</option>
+                                                <?php $query=mysqli_query($con,"select * from tblcategory");
+              while($row=mysqli_fetch_array($query))
+              {
+              ?>    
+                                                 <option value="<?php echo $row['VehicleCat'];?>"><?php echo $row['VehicleCat'];?></option>
+                  <?php } ?> 
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="row form-group">
-                                        <div class="col col-md-3"><label for="email-input" class=" form-control-label">New Password</label></div>
-                                        <div class="col-12 col-md-9"><input type="password" name="newpassword" class="form-control" value="" required="true"></div>
+                                        <div class="col col-md-3"><label for="text-input" class=" form-control-label">Vehicle Company</label></div>
+                                        <div class="col-12 col-md-9"><input type="text" id="vehcomp" name="vehcomp" class="form-control" placeholder="Vehicle Company" required="true"></div>
+                                    </div>
+                                 
+                                     <div class="row form-group">
+                                        <div class="col col-md-3"><label for="text-input" class=" form-control-label">Registration Number</label></div>
+                                        <div class="col-12 col-md-9"><input type="text" id="vehreno" name="vehreno" class="form-control" placeholder="Registration Number" required="true"></div>
                                     </div>
                                     <div class="row form-group">
-                                        <div class="col col-md-3"><label for="password-input" class=" form-control-label">Confirm Password</label></div>
-                                        <div class="col-12 col-md-9"> <input type="password" name="confirmpassword" class="form-control" value="" required="true"></div>
+                                        <div class="col col-md-3"><label for="text-input" class=" form-control-label">Owner Name</label></div>
+                                        <div class="col-12 col-md-9"><input type="text" id="ownername" name="ownername" class="form-control" placeholder="Owner Name" required="true"></div>
+                                    </div>
+                                     <div class="row form-group">
+                                        <div class="col col-md-3"><label for="text-input" class=" form-control-label">Owner Contact Number</label></div>
+                                        <div class="col-12 col-md-9"><input type="text" id="ownercontno" name="ownercontno" class="form-control" placeholder="Owner Contact Number" required="true" maxlength="10" pattern="[0-9]+"></div>
                                     </div>
                                    
-                                  
                                     
-                                    <?php } ?>
-                                   <p style="text-align: center;"> <button type="submit" class="btn btn-primary btn-sm" name="submit" >Change</button></p>
+                                    
+                                   <p style="text-align: center;"> <button type="submit" class="btn btn-primary btn-sm" name="submit" >Add</button></p>
                                 </form>
                             </div>
                             

@@ -1,36 +1,34 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
 error_reporting(0);
+include('includes/dbconnection.php');
 if (strlen($_SESSION['vpmsaid']==0)) {
   header('location:logout.php');
   } else{
+
 if(isset($_POST['submit']))
-{
-$adminid=$_SESSION['vpmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
-if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
-echo '<script>alert("Your password successully changed.")</script>';
-} else {
-
-echo '<script>alert("Your current password is wrong.")</script>';
-}
-
-
-
-}
+  {
+    $catname=$_POST['catename'];
+     
+    $query=mysqli_query($con, "insert into  tblcategory(VehicleCat) value('$catname')");
+    if ($query) {
+    echo "<script>alert('Category added successfully');</script>";
+echo "<script>window.location.href='manage-category.php'</script>";
+  }
+  else
+    {
+     
+       echo "<script>alert('Something Went Wrong. Please try again');</script>";
+    }
 
   
+}
   ?>
 <!doctype html>
 <html class="no-js" lang="">
 <head>
     
-    <title>VPMS - Change Password</title>
+    <title>VPMS - Add Category</title>
    
 
     <link rel="apple-touch-icon" href="https://i.imgur.com/QRAUqs9.png">
@@ -46,19 +44,8 @@ echo '<script>alert("Your current password is wrong.")</script>';
     <link rel="stylesheet" href="assets/css/style.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
 
-</script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
 <body>
@@ -82,8 +69,8 @@ return true;
                             <div class="page-title">
                                 <ol class="breadcrumb text-right">
                                     <li><a href="dashboard.php">Dashboard</a></li>
-                                    <li><a href="change-password.php">Change Password</a></li>
-                                    <li class="active">Change Password</li>
+                                    <li><a href="add-category.php">Category</a></li>
+                                    <li class="active">Add Category</li>
                                 </ol>
                             </div>
                         </div>
@@ -110,35 +97,19 @@ return true;
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Change </strong> Password
+                                <strong>Add </strong> Category
                             </div>
                             <div class="card-body card-block">
-                                <form action="" method="post" enctype="multipart/form-data" class="form-horizontal" name="changepassword" onsubmit="return checkpass();">
+                                <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                                     
-                                   <?php
-$adminid=$_SESSION['vpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
-$cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
-
-?>
                                     <div class="row form-group">
-                                        <div class="col col-md-3"><label for="text-input" class=" form-control-label">Current Password</label></div>
-                                        <div class="col-12 col-md-9"><input type="password" name="currentpassword" class=" form-control" required= "true" value=""></div>
+                                        <div class="col col-md-3"><label for="text-input" class=" form-control-label">Category Name</label></div>
+                                        <div class="col-12 col-md-9"><input type="text" id="catename" name="catename" class="form-control" placeholder="Vehicle Category" required="true"></div>
                                     </div>
-                                    <div class="row form-group">
-                                        <div class="col col-md-3"><label for="email-input" class=" form-control-label">New Password</label></div>
-                                        <div class="col-12 col-md-9"><input type="password" name="newpassword" class="form-control" value="" required="true"></div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col col-md-3"><label for="password-input" class=" form-control-label">Confirm Password</label></div>
-                                        <div class="col-12 col-md-9"> <input type="password" name="confirmpassword" class="form-control" value="" required="true"></div>
-                                    </div>
-                                   
-                                  
+                                 
                                     
-                                    <?php } ?>
-                                   <p style="text-align: center;"> <button type="submit" class="btn btn-primary btn-sm" name="submit" >Change</button></p>
+                                    
+                                   <p style="text-align: center;"> <button type="submit" class="btn btn-primary btn-sm" name="submit" >Add</button></p>
                                 </form>
                             </div>
                             

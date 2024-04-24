@@ -3,7 +3,7 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 error_reporting(0);
-if (strlen($_SESSION['vpmsuid']==0)) {
+if (strlen($_SESSION['vpmsaid']==0)) {
   header('location:logout.php');
   } else{ ?>
 
@@ -13,7 +13,7 @@ if (strlen($_SESSION['vpmsuid']==0)) {
  <html class="no-js" lang="">
 <head>
     
-    <title>VPMS - User Dashboard</title>
+    <title>VPMS - Admin Dashboard</title>
    
 
     <link rel="apple-touch-icon" href="https://i.imgur.com/QRAUqs9.png">
@@ -25,8 +25,8 @@ if (strlen($_SESSION['vpmsuid']==0)) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
-    <link rel="stylesheet" href="../admin/assets/css/cs-skin-elastic.css">
-    <link rel="stylesheet" href="../admin/assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
     <link href="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/jqvmap@1.5.1/dist/jqvmap.min.css" rel="stylesheet">
@@ -84,26 +84,147 @@ if (strlen($_SESSION['vpmsuid']==0)) {
             <div class="animated fadeIn">
                 <!-- Widgets  -->
                 <div class="row">
-                   
-                    <div class="col-lg-12 col-md-6">
+                    <?php
+//todays Vehicle Entries
+ $query=mysqli_query($con,"select ID from tblvehicle where date(InTime)=CURDATE();");
+$count_today_vehentries=mysqli_num_rows($query);
+ ?>
+                    <div class="col-lg-3 col-md-6">
                         <div class="card">
                             <div class="card-body">
                                 <div class="stat-widget-five">
-                                    <?php
-$uid=$_SESSION['vpmsuid'];
-$ret=mysqli_query($con,"select * from tblregusers where ID='$uid'");
-$cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
-    ?> 
                                     <div class="stat-icon dib flat-color-1">
-                                        Welcome to panel !! <?php  echo $row['FirstName'];?> <?php  echo $row['LastName'];?>
+                                        <i class="pe-7s-car"></i>
                                     </div>
-                                    <?php } ?>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count"><?php echo $count_today_vehentries;?></span></div>
+                                            <div class="stat-heading">Todays Vehicle Entries</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <?php
+//Yesterdays Vehicle Entrie
+ $query1=mysqli_query($con,"select ID from tblvehicle where date(InTime)=CURDATE()-1;");
+$count_yesterday_vehentries=mysqli_num_rows($query1);
+ ?>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-2">
+                                        <i class="pe-7s-car"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count"><?php echo $count_yesterday_vehentries?></span></div>
+                                            <div class="stat-heading">Yesterdays Vehicle Entries</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <?php
+//Last Sevendays Vehicle Entries
+ $query2=mysqli_query($con,"select ID from tblvehicle where date(InTime)>=(DATE(NOW()) - INTERVAL 7 DAY);");
+$count_lastsevendays_vehentries=mysqli_num_rows($query2);
+ ?>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-3">
+                                        <i class="pe-7s-car"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count"><?php echo $count_lastsevendays_vehentries?></span></div>
+                                            <div class="stat-heading">Last 7 days Vehicle Entries</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <?php
+//Total Vehicle Entries
+ $query3=mysqli_query($con,"select ID from tblvehicle");
+$count_total_vehentries=mysqli_num_rows($query3);
+ ?>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-4">
+                                        <i class="pe-7s-car"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count"><?php echo $count_total_vehentries?></span></div>
+                                            <div class="stat-heading">Total Vehicle Entries</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+           <?php
+//total Registered Users
+ $query=mysqli_query($con,"select ID from tblregusers");
+$regdusers=mysqli_num_rows($query);
+ ?>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-1">
+                                        <i class="pe-7s-user"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count"><?php echo $regdusers;?></span></div>
+                                            <div class="stat-heading">Total Registered Users</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+           <?php
+//total Registered Users
+ $query=mysqli_query($con,"select ID from tblcategory");
+$listedcat=mysqli_num_rows($query);
+ ?>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-1">
+                                        <i class="pe-7s-file"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count"><?php echo $listedcat;?></span></div>
+                                            <div class="stat-heading">Listed Categories</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
 
                 </div>
                 <!-- /Widgets -->
@@ -123,7 +244,7 @@ while ($row=mysqli_fetch_array($ret)) {
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
-    <script src="../admin/assets/js/main.js"></script>
+    <script src="assets/js/main.js"></script>
 
     <!--  Chart js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
@@ -137,11 +258,11 @@ while ($row=mysqli_fetch_array($ret)) {
     <script src="https://cdn.jsdelivr.net/npm/flot-spline@0.0.1/js/jquery.flot.spline.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/simpleweather@3.1.0/jquery.simpleWeather.min.js"></script>
-    <script src="../admin/assets/js/init/weather-init.js"></script>
+    <script src="assets/js/init/weather-init.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.js"></script>
-    <script src="../admin/assets/js/init/fullcalendar-init.js"></script>
+    <script src="assets/js/init/fullcalendar-init.js"></script>
 
     <!--Local Stuff-->
     <script>
